@@ -1,0 +1,65 @@
+{
+  "num": "05",
+  "slug": "05-effets-fetch",
+  "titre": "Effets et chargement de données",
+  "module": "Module 4 · Effets et hooks personnalisés",
+  "duree": 30,
+  "objectif": "Charger le catalogue depuis une API simulée (800 ms de latence) avec useEffect, afficher le chargement et l'erreur, puis ranger cette logique dans un hook useBooks().",
+  "notions": [
+    "`useEffect(fonction, dépendances)` : synchroniser le composant avec l'extérieur",
+    "Tableau de dépendances `[]` : une seule fois, après le premier affichage",
+    "Les trois états d'un chargement : en cours, erreur, données",
+    "Nettoyage (`return () => ...`) contre les réponses arrivées trop tard",
+    "Hook personnalisé : une fonction `useXxx` qui regroupe des hooks"
+  ],
+  "etapes": [
+    {
+      "titre": "Déclarer les trois états",
+      "faire": [
+        "Dans `BookCatalog`, remplacez `const books = []` par trois `useState` : `books`, `loading` (true), `error` (null)",
+        "Si `loading` est vrai, retournez `<p>Chargement des livres…</p>`"
+      ],
+      "attendu": "« Chargement des livres… » s'affiche… et reste affiché : rien ne charge encore les données.",
+      "code": "const [books, setBooks] =\n  useState<Book[]>([]);\nconst [loading, setLoading] = useState(true);\nconst [error, setError] =\n  useState<string | null>(null);\n\nif (loading) {\n  return <p>Chargement des livres…</p>;\n}"
+    },
+    {
+      "titre": "Charger avec useEffect",
+      "faire": [
+        "Ajoutez un `useEffect(() => { ... }, [])` juste après les états",
+        "Dedans : `fetchBooks().then(setBooks).finally(() => setLoading(false))`"
+      ],
+      "attendu": "« Chargement… » pendant environ une seconde, puis les 12 livres s'affichent.",
+      "code": "useEffect(() => {\n  fetchBooks()\n    .then((data) => setBooks(data))\n    .finally(() => setLoading(false));\n}, []); // [] : une seule fois"
+    },
+    {
+      "titre": "Erreur et nettoyage",
+      "faire": [
+        "Ajoutez `.catch(...)` qui range le message dans `error`, et affichez-le avec `role=\"alert\"`",
+        "Ajoutez le drapeau `ignore` et la fonction de nettoyage `return () => { ignore = true; }`",
+        "Testez avec `?fail=1` dans l'URL"
+      ],
+      "attendu": "Avec ?fail=1 : « Erreur : Le serveur de la bibliothèque ne répond pas ». Sans : les 12 livres.",
+      "code": "useEffect(() => {\n  let ignore = false;\n  fetchBooks()\n    .then((d) => {\n      if (!ignore) setBooks(d);\n    })\n    .catch((err) => {\n      if (!ignore) setError(err.message);\n    })\n    .finally(() => {\n      if (!ignore) setLoading(false);\n    });\n  return () => { ignore = true; };\n}, []);\n\nif (error) {\n  return <p role=\"alert\">Erreur : {error}</p>;\n}"
+    },
+    {
+      "titre": "Extraire le hook useBooks",
+      "faire": [
+        "Créez `function useBooks()` au-dessus de `BookCatalog`",
+        "Déplacez-y les 3 états et l'effet, terminez par `return { books, loading, error }`",
+        "Dans `BookCatalog` : `const { books, loading, error } = useBooks();`"
+      ],
+      "attendu": "Rien ne change à l'écran (chargement, puis 12 livres) : c'est le but, le code est juste mieux rangé.",
+      "code": "export function useBooks() {\n  const [books, setBooks] =\n    useState<Book[]>([]);\n  // ... les 2 autres états\n  useEffect(() => { /* ... */ }, []);\n  return { books, loading, error };\n}\n\nexport function BookCatalog() {\n  const { books, loading, error } =\n    useBooks();\n  ..."
+    },
+    {
+      "titre": "Pour aller plus loin : le titre de l'onglet",
+      "faire": [
+        "Dans `BookCatalog`, ajoutez un second `useEffect` qui écrit `document.title`",
+        "Choisissez la bonne dépendance : `[books.length]`"
+      ],
+      "attendu": "L'onglet du navigateur affiche « 0 livres · Bibliothèque » puis « 12 livres · Bibliothèque ».",
+      "code": "useEffect(() => {\n  document.title =\n    `${books.length} livres · Bibliothèque`;\n}, [books.length]); // relancé si ça change",
+      "bonus": true
+    }
+  ]
+}

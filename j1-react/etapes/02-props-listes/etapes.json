@@ -1,0 +1,55 @@
+{
+  "num": "02",
+  "slug": "02-props-listes",
+  "titre": "Props, listes et conditions",
+  "module": "Module 2 · Props, listes et conditions",
+  "duree": 40,
+  "objectif": "Rendre la carte réutilisable avec des props, afficher tout le catalogue, gérer les cas particuliers et composer avec children.",
+  "notions": [
+    "Les props : les paramètres d'un composant, typés comme ceux d'une fonction",
+    "`array.map(...)` pour afficher une liste, avec une `key` unique par élément",
+    "Rendu conditionnel : `{condition && <JSX />}` et retour anticipé",
+    "`children` : le contenu placé entre la balise ouvrante et la balise fermante"
+  ],
+  "etapes": [
+    {
+      "titre": "Passer le livre en props",
+      "faire": [
+        "Déclarez `type BookCardProps = { book: Book }` et recevez `({ book }: BookCardProps)`",
+        "Remplacez les valeurs en dur par `book.title`, `book.author`…",
+        "Dans `Exercice`, passez `book={BOOKS[0]}` puis `book={BOOKS[1]}`"
+      ],
+      "attendu": "Deux cartes différentes : « L'Étranger » (jaune) puis « Dune » (orange).",
+      "code": "type BookCardProps = { book: Book };\n\nexport function BookCard(\n  { book }: BookCardProps\n) {\n  return (\n    <article className=\"book-card\">\n      <h3>{book.title}</h3>\n      ...\n\n<BookCard book={BOOKS[0]} />"
+    },
+    {
+      "titre": "Afficher la liste avec map",
+      "faire": [
+        "Dans `BookList`, retournez un `<ul className=\"book-list\">`",
+        "`books.map(...)` produit un `<li key={book.id}>` par livre, avec sa `<BookCard>`",
+        "Dans `Exercice`, remplacez les deux cartes par `<BookList books={BOOKS} />`"
+      ],
+      "attendu": "Les 12 livres du catalogue s'affichent en grille, sans avertissement « key » dans la console.",
+      "code": "<ul className=\"book-list\">\n  {books.map((book) => (\n    <li key={book.id}>\n      <BookCard book={book} />\n    </li>\n  ))}\n</ul>"
+    },
+    {
+      "titre": "Gérer les cas particuliers",
+      "faire": [
+        "Dans `BookCard`, ajoutez `{!book.available && <span …>Indisponible</span>}`",
+        "Dans `BookList`, si `books.length === 0`, retournez `<p className=\"empty\">Aucun livre à afficher</p>`",
+        "Dans `Exercice`, ajoutez `<BookList books={[]} />` sous la première liste"
+      ],
+      "attendu": "« Indisponible » sur Dune, Astérix et Millénium ; « Aucun livre à afficher » sous la grille.",
+      "code": "{!book.available && (\n  <span className=\"badge badge-warning\">\n    Indisponible\n  </span>\n)}\n\nif (books.length === 0) {\n  return <p className=\"empty\">…</p>;\n}"
+    },
+    {
+      "titre": "Composer avec children",
+      "faire": [
+        "`Section` retourne un `<section>` avec `<h2>{title}</h2>` puis `{children}`",
+        "Dans `Exercice`, entourez la grille de `<Section title=\"Catalogue\">` et la liste vide de `<Section title=\"Nouveautés\">`"
+      ],
+      "attendu": "Deux titres de section, « Catalogue » au-dessus de la grille et « Nouveautés » au-dessus du message.",
+      "code": "export function Section({ title, children }) {\n  return (\n    <section>\n      <h2>{title}</h2>\n      {children}\n    </section>\n  );\n}\n\n<Section title=\"Catalogue\">\n  <BookList books={BOOKS} />\n</Section>"
+    }
+  ]
+}

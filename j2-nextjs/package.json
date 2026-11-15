@@ -1,0 +1,36 @@
+{
+  "name": "formation-j2-nextjs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Formation React & Next.js - Jour 2 : exercices Next.js (App Router)",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint",
+    "reprendre": "node scripts/reprendre.mjs",
+    "verifier-etapes": "node scripts/verifier-etapes.mjs"
+  },
+  "dependencies": {
+    "next": "^16.4.3",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^16.4.3",
+    "typescript": "^5"
+  },
+  "formation": {
+    "exercices": "app/exercices"
+  }
+}

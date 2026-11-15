@@ -1,0 +1,53 @@
+{
+  "num": "06",
+  "slug": "06-context-liste-lecture",
+  "titre": "Context : liste de lecture",
+  "module": "Module 5 · Partager l'état avec le Context",
+  "duree": 30,
+  "objectif": "Partager une liste de lecture entre l'en-tête, la liste des livres et le panneau « Ma liste », sans faire descendre des props à travers tous les composants.",
+  "notions": [
+    "`createContext` : créer un « canal » de données",
+    "Le Provider : `<MonContexte value={...}>` fournit la valeur à tous les descendants",
+    "`useContext(MonContexte)` : lire la valeur depuis n'importe quel descendant",
+    "Un hook d'accès (`useReadingList`) avec une erreur claire hors du Provider"
+  ],
+  "etapes": [
+    {
+      "titre": "Brancher le contexte",
+      "faire": [
+        "Créez `ReadingListContext` avec `createContext<ReadingListValue | null>(null)`",
+        "Dans le Provider : l'état `ids`, les fonctions `add`, `remove`, `has`, et `<ReadingListContext value={...}>`",
+        "Dans `useReadingList` : `return useContext(ReadingListContext)!`"
+      ],
+      "attendu": "Cliquer « Ajouter à ma liste » transforme le bouton en « Retirer de ma liste » (et inversement).",
+      "code": "export const ReadingListContext =\n  createContext<ReadingListValue | null>(\n    null);\n\n// dans ReadingListProvider\nconst [ids, setIds] = useState<string[]>([]);\nconst add = (id: string) =>\n  setIds((prev) => [...prev, id]);\nconst remove = (id: string) =>\n  setIds((prev) =>\n    prev.filter((x) => x !== id));\nconst has = (id: string) => ids.includes(id);\nconst value = { ids, add, remove, has };\nreturn (\n  <ReadingListContext value={value}>\n    {children}\n  </ReadingListContext>\n);"
+    },
+    {
+      "titre": "Compteur dans l'en-tête",
+      "faire": [
+        "Dans `Header`, récupérez `ids` avec `useReadingList()`",
+        "Affichez `ids.length` à la place du 0"
+      ],
+      "attendu": "Le compteur « Ma liste de lecture (N) » suit chaque ajout et chaque retrait, sans aucune prop.",
+      "code": "export function Header() {\n  const { ids } = useReadingList();\n  return (\n    <header className=\"app-header\">\n      <h1>Bibliothèque</h1>\n      <p>Ma liste de lecture ({ids.length})</p>\n    </header>\n  );\n}"
+    },
+    {
+      "titre": "Remplir le panneau",
+      "faire": [
+        "Dans `ReadingListPanel`, récupérez `ids`",
+        "Liste vide : « Votre liste est vide » ; sinon un `<ol>` avec le titre de chaque livre"
+      ],
+      "attendu": "Le panneau de droite liste les titres ajoutés, dans l'ordre d'ajout.",
+      "code": "const { ids } = useReadingList();\n\n{ids.length === 0 ? (\n  <p>Votre liste est vide</p>\n) : (\n  <ol>\n    {ids.map((id) => (\n      <li key={id}>\n        {BOOKS.find((b) => b.id === id)?.title}\n      </li>\n    ))}\n  </ol>\n)}"
+    },
+    {
+      "titre": "Protéger le hook",
+      "faire": [
+        "Dans `useReadingList`, si le contexte vaut `null`, levez une erreur explicite",
+        "Testez : déplacez `<Header />` au-dessus du `<ReadingListProvider>`, regardez la console, puis remettez-le"
+      ],
+      "attendu": "Header hors du Provider : page blanche et, dans la console, « useReadingList doit être utilisé dans un <ReadingListProvider> ».",
+      "code": "export function useReadingList() {\n  const value = useContext(ReadingListContext);\n  if (value === null) {\n    throw new Error(\n      'useReadingList doit être utilisé ' +\n      'dans un <ReadingListProvider>');\n  }\n  return value;\n}"
+    }
+  ]
+}

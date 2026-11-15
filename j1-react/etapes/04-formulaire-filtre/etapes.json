@@ -1,0 +1,54 @@
+{
+  "num": "04",
+  "slug": "04-formulaire-filtre",
+  "titre": "Formulaire et filtre",
+  "module": "Module 3 · État et événements",
+  "duree": 30,
+  "objectif": "Filtrer le catalogue avec un formulaire contrôlé : recherche par titre, genre, disponibilité, et un bouton pour tout réinitialiser.",
+  "notions": [
+    "Champ contrôlé : `value={etat}` + `onChange={(e) => setEtat(e.target.value)}`",
+    "Case à cocher : `checked` et `e.target.checked`",
+    "État dérivé : la liste filtrée se calcule pendant le rendu, elle ne se stocke pas"
+  ],
+  "etapes": [
+    {
+      "titre": "Rechercher par titre",
+      "faire": [
+        "Déclarez un état `query` et reliez l'input : `value` + `onChange`",
+        "Calculez `filtered` avec `books.filter(...)` : le titre contient `query`, en minuscules",
+        "Pas de second état « filteredBooks » ni de `useEffect`"
+      ],
+      "attendu": "Taper « le » réduit la liste en direct (« 5 résultat(s) ») ; effacer le champ ramène les 12 livres.",
+      "code": "const [query, setQuery] = useState('');\n\nconst q = query.trim().toLowerCase();\nconst filtered = books.filter((book) =>\n  book.title.toLowerCase().includes(q));\n\n<input\n  type=\"search\"\n  value={query}\n  onChange={(e) => setQuery(e.target.value)}\n/>"
+    },
+    {
+      "titre": "Filtrer par genre",
+      "faire": [
+        "Déclarez un état `genre` typé `Genre | ''` ('' = tous les genres)",
+        "Reliez le `<select>` avec `value` et `onChange`",
+        "Ajoutez la condition dans le filtre : `genre === '' || book.genre === genre`"
+      ],
+      "attendu": "Choisir « Fantasy » n'affiche plus que Le Seigneur des Anneaux et Le Hobbit ; la recherche se combine avec le genre.",
+      "code": "const [genre, setGenre] =\n  useState<Genre | ''>('');\n\n<select\n  value={genre}\n  onChange={(e) =>\n    setGenre(e.target.value as Genre | '')}\n>"
+    },
+    {
+      "titre": "Garder les disponibles",
+      "faire": [
+        "Déclarez un état booléen `onlyAvailable`",
+        "Case à cocher : `checked={onlyAvailable}` et `e.target.checked` dans `onChange`",
+        "Ajoutez `(!onlyAvailable || book.available)` dans le filtre"
+      ],
+      "attendu": "Cocher la case retire Dune, Astérix et Millénium : « 9 résultat(s) ».",
+      "code": "const [onlyAvailable, setOnlyAvailable] =\n  useState(false);\n\n<input\n  type=\"checkbox\"\n  checked={onlyAvailable}\n  onChange={(e) =>\n    setOnlyAvailable(e.target.checked)}\n/>"
+    },
+    {
+      "titre": "Tout réinitialiser",
+      "faire": [
+        "Écrivez une fonction `reset()` qui remet les 3 états à leur valeur de départ",
+        "Branchez-la sur le bouton « Réinitialiser »"
+      ],
+      "attendu": "Après une recherche filtrée, « Réinitialiser » vide le champ, remet « Tous », décoche la case : 12 résultats.",
+      "code": "function reset() {\n  setQuery('');\n  setGenre('');\n  setOnlyAvailable(false);\n}\n\n<button type=\"button\" onClick={reset}>\n  Réinitialiser\n</button>"
+    }
+  ]
+}

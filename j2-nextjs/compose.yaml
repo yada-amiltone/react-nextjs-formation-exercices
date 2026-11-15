@@ -1,0 +1,21 @@
+# Démo du module 10 : lancer l'application dans un conteneur.
+#   docker compose up --build -d     construit l'image et démarre le conteneur
+#   docker compose ps                l'état du service (healthy au bout de quelques secondes)
+#   docker compose logs -f web       les logs du serveur Next.js
+#   docker compose down              arrête et supprime le conteneur
+services:
+  web:
+    build: .
+    image: bibliotheque-next:local
+    ports:
+      - "3000:3000"
+    environment:
+      # Lue au démarrage du serveur : rien à reconstruire pour la changer.
+      TZ: Europe/Paris
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

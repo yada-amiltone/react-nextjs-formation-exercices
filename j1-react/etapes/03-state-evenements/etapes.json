@@ -1,0 +1,56 @@
+{
+  "num": "03",
+  "slug": "03-state-evenements",
+  "titre": "État et événements",
+  "module": "Module 3 · État et événements",
+  "duree": 30,
+  "objectif": "Rendre les cartes interactives avec useState (j'aime, favori, résumé), puis gérer une liste d'étiquettes sans jamais modifier le tableau en place.",
+  "notions": [
+    "`const [valeur, setValeur] = useState(valeurInitiale)`",
+    "Gestionnaire d'événement : `onClick={() => ...}`",
+    "Mise à jour à partir de la valeur précédente : `setLikes((n) => n + 1)`",
+    "Chaque carte a son propre état",
+    "Immuabilité : `[...prev, item]` et `prev.filter(...)`, jamais `push`"
+  ],
+  "etapes": [
+    {
+      "titre": "Compter les « J'aime »",
+      "faire": [
+        "Déclarez `const [likes, setLikes] = useState(0)` dans `BookCard`",
+        "Affichez `{likes}` dans le bouton et ajoutez `onClick={() => setLikes((n) => n + 1)}`"
+      ],
+      "attendu": "Chaque clic incrémente le compteur de SA carte ; les deux autres cartes ne bougent pas.",
+      "code": "const [likes, setLikes] = useState(0);\n\n<button\n  type=\"button\"\n  onClick={() => setLikes((n) => n + 1)}\n>\n  👍 J'aime ({likes})\n</button>"
+    },
+    {
+      "titre": "Basculer en favori",
+      "faire": [
+        "Déclarez un état `isFavorite` (false au départ)",
+        "Le texte du bouton dépend de l'état ; au clic : `setIsFavorite((fav) => !fav)`",
+        "Ajoutez `aria-pressed={isFavorite}` sur le bouton"
+      ],
+      "attendu": "Le bouton passe à « Retirer des favoris » et se colore en bleu ; un 2e clic revient en arrière.",
+      "code": "const [isFavorite, setIsFavorite] =\n  useState(false);\n\n<button\n  type=\"button\"\n  aria-pressed={isFavorite}\n  onClick={() => setIsFavorite((f) => !f)}\n>\n  {isFavorite ? 'Retirer des favoris'\n              : 'Ajouter aux favoris'}\n</button>"
+    },
+    {
+      "titre": "Replier le résumé",
+      "faire": [
+        "Déclarez un état `showSummary` (false au départ)",
+        "Affichez `{showSummary && <p>{book.summary}</p>}` sous l'auteur",
+        "Le bouton inverse l'état et change de libellé"
+      ],
+      "attendu": "« Voir le résumé » déplie le résumé du livre, « Masquer le résumé » le replie.",
+      "code": "const [showSummary, setShowSummary] =\n  useState(false);\n\n{showSummary && <p>{book.summary}</p>}\n\n<button\n  type=\"button\"\n  onClick={() => setShowSummary((v) => !v)}\n>\n  {showSummary ? 'Masquer le résumé'\n               : 'Voir le résumé'}\n</button>"
+    },
+    {
+      "titre": "Gérer les étiquettes",
+      "faire": [
+        "Écrivez `addTag` : ignore le texte vide, ajoute avec `[...prev, nouveau]`, vide le champ",
+        "Écrivez `removeTag(id)` avec `prev.filter(...)`",
+        "Branchez-les sur les boutons « Ajouter » et « Supprimer »"
+      ],
+      "attendu": "On ajoute « À lire », « Prêté à Paul »… ; chaque « Supprimer » retire la bonne étiquette.",
+      "code": "function addTag() {\n  const label = text.trim();\n  if (!label) return;\n  setTags((prev) => [\n    ...prev,\n    { id: Date.now(), label },\n  ]);\n  setText('');\n}\n\nfunction removeTag(id: number) {\n  setTags((prev) =>\n    prev.filter((t) => t.id !== id));\n}"
+    }
+  ]
+}

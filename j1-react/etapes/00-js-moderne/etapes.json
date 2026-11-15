@@ -1,0 +1,43 @@
+{
+  "num": "00",
+  "slug": "00-js-moderne",
+  "titre": "JavaScript et TypeScript modernes",
+  "module": "Module 0 · JavaScript et TypeScript modernes",
+  "duree": 20,
+  "fichier": "logique.ts",
+  "objectif": "Écrire trois petites fonctions sur le catalogue : déstructuration, méthodes de tableau et copie sans mutation.",
+  "notions": [
+    "Déstructuration et template literals",
+    "`filter`, `map` et `sort` enchaînés",
+    "Spread `{ ...objet }` : copier au lieu de modifier"
+  ],
+  "etapes": [
+    {
+      "titre": "Décrire un livre",
+      "faire": [
+        "Dans `describe`, extrayez `title`, `author` et `year` du livre (déstructuration)",
+        "Renvoyez un template literal (entre backticks) qui assemble titre, auteur et année"
+      ],
+      "attendu": "La ligne « describe(Dune) » affiche « Dune, Frank Herbert (1965) » et le badge « identique ».",
+      "code": "export function describe(book: Book): string {\n  const { title, author, year } = book;\n  return `${title}, ${author} (${year})`;\n}"
+    },
+    {
+      "titre": "Les titres disponibles",
+      "faire": [
+        "Dans `availableTitles`, gardez les livres disponibles avec `filter`",
+        "Ne gardez que leur titre avec `map`, puis triez avec `sort((a, b) => a.localeCompare(b))`"
+      ],
+      "attendu": "9 titres, de « Blacksad » à « Sapiens » : les trois lignes de l'étape 2 sont « identique ».",
+      "code": "return books\n  .filter((book) => book.available)\n  .map((book) => book.title)\n  .sort((a, b) => a.localeCompare(b));"
+    },
+    {
+      "titre": "Emprunter sans modifier",
+      "faire": [
+        "Dans `borrow`, renvoyez `books.map(...)` : un nouveau tableau",
+        "Pour le livre `id`, renvoyez une copie `{ ...book, available: false }` ; les autres tels quels"
+      ],
+      "attendu": "Nouveau tableau : oui ; L'Étranger vaut false après, mais reste true dans BOOKS.",
+      "code": "return books.map((book) =>\n  book.id === id\n    ? { ...book, available: false }\n    : book,\n);"
+    }
+  ]
+}
