@@ -73,6 +73,7 @@ export async function getBook(
 export async function getRecommendations({
   delay = 2500,
 }: { delay?: number } = {}): Promise<Book[]> {
+  'use cache'
   await sleep(delay)
   return store()
     .books.filter((book) => book.available)
